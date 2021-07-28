@@ -29,7 +29,7 @@ This package builds upon @mswjs/http-middleware but if you want to set predefine
 
 Set up http-middleware as described in their docs, but instead of importing handlers, you import a function from 'msw-dynamic-http-middleware' to create handlers for you, based on the scenarios and the endpoints you provide.
 
-```
+```javascript
 import { createServer } from '@mswjs/http-middleware'
 import { createHandlers } from 'msw-dynamic-http-middleware'
 
