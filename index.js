@@ -2,7 +2,7 @@ import { createServer } from '@mswjs/http-middleware'
 import { createHandlers } from './handlers.js'
 
 const scenarios = {
-  'user': (req, res, ctx) => res(ctx.json({ name: 'frank' }))
+  'user success': (req, res, ctx) => res(ctx.json({ name: 'frank' }))
 }
   
 const endpoints = [
