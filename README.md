@@ -21,9 +21,9 @@ For example when you want to set the scenario 'user success' for `GET /user`, ju
 The success scenario is a predefined MSW handler.
 You need scenarios because MSW handlers are not (easily) serializable and a scenario name is.
 
-## Does this package work with vanilla MSW
+## Does this package work with MSW only?
 
-This package builds upon @mswjs/http-middleware but if you want to set redefined scenarios for 
+This package builds upon @mswjs/http-middleware but if you want to set predefined scenarios for vanilla MSW handlers, consider using [MSW UI](https://github.com/fvanwijk/msw-ui).
 
 ## How to use
 
