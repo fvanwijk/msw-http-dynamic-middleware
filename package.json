@@ -19,7 +19,9 @@
   "author": "Frank van Wijk <info@frankvanwijk.nl>",
   "license": "MIT",
   "dependencies": {
-    "@mswjs/http-middleware": "0.1.1"
+    "@mswjs/http-middleware": "0.1.1",
+    "pino": "6.13.0",
+    "pino-pretty": "5.1.2"
   },
   "devDependencies": {
     "nodemon": "2.0.12"
