@@ -50,4 +50,4 @@ httpServer.listen(9090);
 
 Endpoints that don't have a handler assigned (yet), for example when the server starts, return a default response, which is currently an empty body with status 200.
 
-Endpoints that do not exist because there are no scenarios defined for this endpoint, do return the default response from `@mswjs/http-middelware`, which is `{ "error": "Mock not found" }`.
+Endpoints that do not exist because there are no scenarios defined for this endpoint, do return the default response from `@mswjs/http-middelware`, which is `{ "error": "Mock not found" }` with status 404.
