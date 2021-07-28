@@ -1,17 +1,13 @@
-import { createServer } from '@mswjs/http-middleware'
-import { createHandlers } from './index.js'
+import { rest } from 'msw';
+import { createServer } from '@mswjs/http-middleware';
+import { createHandlers } from './index.js';
 
 const scenarios = {
-  'user success': (req, res, ctx) => res(ctx.json({ name: 'frank' }))
-}
-  
-const endpoints = [
-  ['GET', '/user'],
-  ['GET', '/users']
-];
+  'user success': rest.get('/user', (req, res, ctx) => res(ctx.json({ name: 'frank' }))),
+};
 
-const handlers = createHandlers(endpoints, scenarios);
+const handlers = createHandlers(scenarios);
 
-const httpServer = createServer(...handlers)
+const httpServer = createServer(...handlers);
 
-httpServer.listen(9090)
+httpServer.listen(9090);

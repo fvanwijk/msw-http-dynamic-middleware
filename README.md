@@ -8,13 +8,11 @@
 The nature of MSW and also the http-middleware is that everything is configured in code, meaning that the mock handlers are hard coded.
 
 This helper that uses http-middleware generates an extra endpoint `PUT /scenario` to apply a predefined scenario for a REST endpoint. Note that GraphQL is not supported yet.
-For example when you want to set the scenario 'user success' for `GET /user`, just call this endpoint with in the body:
+For example when you want to set the scenario 'user success', just call this endpoint with in the body:
 
 ```json
 {
-    "method": "GET",
-    "path": "/user",
-    "scenario": "user success"
+  "scenario": "user success"
 }
 ```
 
@@ -27,26 +25,27 @@ This package builds upon @mswjs/http-middleware but if you want to set predefine
 
 ## How to use
 
-Set up http-middleware as described in their docs, but instead of importing handlers, you import a function from 'msw-dynamic-http-middleware' to create handlers for you, based on the scenarios and the endpoints you provide.
+First install this package and @msw/http-middleware as devDependency:
+
+```
+npm install -D msw-dynamic-http-middleware @msw/http-middleware
+```
+
+Set up http-middleware as described in their docs, but instead of importing handlers, you import a function from 'msw-dynamic-http-middleware' to create handlers for you, based on the scenarios you provide.
 
 ```javascript
-import { createServer } from '@mswjs/http-middleware'
-import { createHandlers } from 'msw-dynamic-http-middleware'
+import { createServer } from '@mswjs/http-middleware';
+import { createHandlers } from 'msw-dynamic-http-middleware';
 
 const scenarios = {
-  'user success': (req, res, ctx) => res(ctx.json({ name: 'frank' }))
-}
-  
-const endpoints = [
-  ['GET', '/user'],
-  ['GET', '/users']
-];
+  'user success': rest.get('/user', (req, res, ctx) => res(ctx.json({ name: 'frank' }))),
+};
 
-const handlers = createHandlers(endpoints, scenarios);
+const handlers = createHandlers(scenarios);
 
-const httpServer = createServer(...handlers)
+const httpServer = createServer(...handlers);
 
-httpServer.listen(9090)
+httpServer.listen(9090);
 ```
 
 Endpoints that don't have a handler assigned (yet), for example when the server starts, return a default response, which is currently an empty body with status 200.

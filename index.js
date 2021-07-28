@@ -1,52 +1,61 @@
-import { rest } from 'msw'
+import { rest } from 'msw';
 
-const methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
-const defaultHandler = (req, res, ctx) => res(ctx.status(200));
+const defaultResolver = (req, res, ctx) => res(ctx.status(200));
 
-const createError = (res, ctx, fieldName) => {
-  return res(ctx.status(401), ctx.text(`Please provide a ${fieldName} in the request body. Example: { "method": "GET", "path": "/user", "scenario": "user" }`));
-}
-
-export const createHandlers = (endpoints, scenarios) => {
-  const activeHandlers = {};
+/**
+ * Create REST endpoints (handlers) based on the given scenarios.
+ * When a scenario is set using PUT /scenario, the path and method of the scenario handler are used as keys in the activeResolvers map and the resolver is used as value
+ *
+ * @param {*} scenarios an object of RestHandlers with scenario name as key.
+ * @returns RestHandler[]
+ */
+export const createHandlers = scenarios => {
+  /* Store currently active resolvers by method and path, for example:
+   * {
+   *   '/user/': {
+   *     GET: [resolver]
+   *   }
+   * }
+   */
+  const activeResolvers = {};
 
   return [
-    ...endpoints.map(([method, endpoint]) => {
-      if (!methods.includes(method)) {
-        throw new Error(`Invalid input method ${method} provided. Valid methods: ${methods.join(', ')}`);
-      }
+    // Create mock endpoints for all defined scenarios
+    ...Object.values(scenarios).map(handler => {
+      const { method, path } = handler.info;
+      return rest[method.toLowerCase()](path, (req, res, ctx) => {
+        // Forward call to active resolver that comes from scenario or fall back to default resolver
+        const resolver = activeResolvers[path]?.[method] || defaultResolver;
 
-      return rest[method.toLowerCase()](endpoint, (req, res, ctx) => {
-        return activeHandlers[endpoint]?.GET(req, res, ctx) || defaultHandler(req, res, ctx)
-      })
+        return resolver(req, res, ctx);
+      });
     }),
 
-    // Set mock for any endpoint
+    // Create endpoint to set mock for any endpoint
     rest.put('/scenario', (req, res, ctx) => {
-      const { method, path, scenario} = req.body;
+      const scenarioName = req.body.scenario;
 
-      if (!method) {
-        return createError(res, ctx, 'method')
-      }
-      if (!path) {
-        return createError(res, ctx, 'path')
-      }
-      if (!scenario) {
-        return createError(res, ctx, 'scenario');
+      if (!scenarioName) {
+        return res(
+          ctx.status(401),
+          ctx.text(`Please provide a scename in the request body. Example: { "scenario": "user success" }`),
+        );
       }
 
-      if (!(path in activeHandlers)) {
-        activeHandlers[path] = {};
-      }
-
-      const selectedScenario = scenarios[scenario];
+      const selectedScenario = scenarios[scenarioName];
       if (!selectedScenario) {
-        return res(ctx.status(401), ctx.text(`Scenario "${scenario}" does not exist`))
-      };
+        return res(ctx.status(401), ctx.text(`Scenario "${scenarioName}" does not exist`));
+      }
 
-      activeHandlers[path][method] = selectedScenario;
+      const { path, method } = selectedScenario.info;
+
+      if (!(path in activeResolvers)) {
+        activeResolvers[path] = {};
+      }
+
+      activeResolvers[path][method] = selectedScenario.resolver;
 
       return res(ctx.status(205));
-    })
-  ]
+    }),
+  ];
 };

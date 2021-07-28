@@ -1,14 +1,21 @@
 {
   "name": "msw-dynamic-http-middleware",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Create dynamic handlers for MSW HTTP middleware",
   "main": "index.js",
-  "files": ["index.js"],
+  "files": [
+    "index.js"
+  ],
   "scripts": {
     "start": "nodemon server.js"
   },
   "type": "module",
-  "keywords": ["msw", "http-middleware", "rest", "mocks"],
+  "keywords": [
+    "msw",
+    "http-middleware",
+    "rest",
+    "mocks"
+  ],
   "author": "Frank van Wijk <info@frankvanwijk.nl>",
   "license": "MIT",
   "dependencies": {
