@@ -1,6 +1,10 @@
-# MSW dynamic HTTP middleware
+<h1 align="center">MSW dynamic HTTP middleware</h1>
 
-@mswjs/http-middleware is a solution to run MSW in a separate server to which you have to proxy the HTTP calls from your app.
+<p align="center">Create dynamic handlers for MSW HTTP middleware</p>
+
+# Features
+
+[@mswjs/http-middleware](https://github.com/mswjs/http-middleware) is a solution to run MSW in a separate server to which you have to proxy the HTTP calls from your app.
 The nature of MSW and also the http-middleware is that everything is configured in code, meaning that the mock handlers are hard coded.
 
 This helper that uses http-middleware generates an extra endpoint `PUT /scenario` to apply a predefined scenario for a REST endpoint. Note that GraphQL is not supported yet.
