@@ -1,6 +1,6 @@
 {
   "name": "msw-dynamic-http-middleware",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Create dynamic handlers for MSW HTTP middleware",
   "main": "index.js",
   "files": [
@@ -19,11 +19,14 @@
   "author": "Frank van Wijk <info@frankvanwijk.nl>",
   "license": "MIT",
   "dependencies": {
-    "@mswjs/http-middleware": "0.1.1",
     "pino": "6.13.0",
     "pino-pretty": "5.1.2"
   },
   "devDependencies": {
     "nodemon": "2.0.12"
+  },
+  "peerDependencies": {
+    "@mswjs/http-middleware": "=>0.1.1",
+    "msw": "=>0.25"
   }
 }
