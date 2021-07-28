@@ -3,7 +3,7 @@
 @mswjs/http-middleware is a solution to run MSW in a separate server to which you have to proxy the HTTP calls from your app.
 The nature of MSW and also the http-middleware is that everything is configured in code, meaning that the mock handlers are hard coded.
 
-This helper that uses http-middleware generates an extra endpoint `PUT /scenario` to apply a predefined scenario for an endpoint.
+This helper that uses http-middleware generates an extra endpoint `PUT /scenario` to apply a predefined scenario for a REST endpoint. Note that GraphQL is not supported yet.
 For example when you want to set the scenario 'user success' for `GET /user`, just call this endpoint with in the body:
 
 ```json
@@ -14,8 +14,8 @@ For example when you want to set the scenario 'user success' for `GET /user`, ju
 }
 ```
 
-The success scenario is predefined.
-You need scenarios because MSW handlers are not (easily) serializable and a scenario is.
+The success scenario is a predefined MSW handler.
+You need scenarios because MSW handlers are not (easily) serializable and a scenario name is.
 
 ## Does this package work with vanilla MSW
 
