@@ -28,7 +28,6 @@ export const createHandlers = scenarios => {
         const { method, path } = handler.info;
         return rest[method.toLowerCase()](path, (req, res, ctx) => {
           // Forward call to active resolver that comes from scenario or fall back to default resolver
-          console.log('call', method, path, activeResolvers[path]?.[method])
           const resolver = activeResolvers[path]?.[method] || defaultResolver;
   
           return resolver(req, res, ctx);
@@ -42,14 +41,14 @@ export const createHandlers = scenarios => {
 
       if (!scenarioName) {
         return res(
-          ctx.status(401),
-          ctx.text(`Please provide a scename in the request body. Example: { "scenario": "user success" }`),
+          ctx.status(400),
+          ctx.text(`Please provide a scenario name in the request body. Example: { "scenario": "user success" }`),
         );
       }
 
       const selectedScenario = scenarios[scenarioName];
       if (!selectedScenario) {
-        return res(ctx.status(401), ctx.text(`Scenario "${scenarioName}" does not exist`));
+        return res(ctx.status(400), ctx.text(`Scenario "${scenarioName}" does not exist`));
       }
 
       const { path, method } = selectedScenario.info;
