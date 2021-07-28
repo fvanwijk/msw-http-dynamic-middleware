@@ -1,6 +1,6 @@
 import { rest } from 'msw';
 import { createServer } from '@mswjs/http-middleware';
-import { createHandlers, Scenarios } from './index';
+import { createHandlers, Scenarios } from './src/index';
 import pino from 'pino';
 
 const logger = pino({ prettyPrint: {

@@ -1,15 +1,25 @@
 {
   "name": "msw-dynamic-http-middleware",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "Create dynamic handlers for MSW HTTP middleware",
-  "main": "index.ts",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
   "files": [
-    "index.ts"
+    "dist",
+    "src"
   ],
+  "engines": {
+    "node": ">=14"
+  },
   "scripts": {
-    "dev": "node --loader ts-node/esm --es-module-specifier-resolution=node server.ts"
+    "start": "tsdx watch --tsconfig tsconfig.tsdx.json",
+    "build": "tsdx build --tsconfig tsconfig.tsdx.json",
+    "test": "tsdx test",
+    "lint": "tsdx lint",
+    "server": "node --loader ts-node/esm --es-module-specifier-resolution=node server.ts"
   },
   "type": "module",
+  "module": "dist/msw-dynamic-http-middleware.esm.js",
   "keywords": [
     "msw",
     "http-middleware",
@@ -25,6 +35,7 @@
   "devDependencies": {
     "@types/pino": "6.3.11",
     "ts-node": "10.1.0",
+    "tsdx": "0.14.1",
     "tslib": "1.14.1",
     "typescript": "4.3.5"
   },

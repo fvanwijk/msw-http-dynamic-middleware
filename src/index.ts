@@ -9,7 +9,7 @@ const logger = pino({ prettyPrint: {
   ignore: 'pid,hostname'
 } });
 
-const defaultResolver: ResponseResolver = (req, res, ctx) => res(ctx.status(200));
+const defaultResolver: ResponseResolver = (_, res, ctx) => res(ctx.status(200));
 
 const assertPath = (path: Path): path is string => {
   if (path instanceof RegExp) {
@@ -89,6 +89,7 @@ export const createHandlers = (scenarios: Scenarios)  => {
           activeResolvers[path][method] = handler.resolver;
           return header;
         }
+        return;
       })
       
       logger.info(`Set scenario "${scenarioName}" with resolvers for endpoints: ${headers.join(', ')}`)
