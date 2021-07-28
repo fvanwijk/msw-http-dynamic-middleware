@@ -1,6 +1,6 @@
 {
   "name": "msw-dynamic-http-middleware",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Create dynamic handlers for MSW HTTP middleware",
   "main": "index.js",
   "files": [
@@ -26,7 +26,7 @@
     "nodemon": "2.0.12"
   },
   "peerDependencies": {
-    "@mswjs/http-middleware": "=>0.1.1",
-    "msw": "=>0.25"
+    "@mswjs/http-middleware": ">=0.1.1",
+    "msw": ">=0.25"
   }
 }
