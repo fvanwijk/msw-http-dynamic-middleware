@@ -31,7 +31,7 @@ First install this package and @msw/http-middleware as devDependency:
 npm install -D msw-dynamic-http-middleware @msw/http-middleware
 ```
 
-Set up http-middleware as described in their docs, but instead of importing handlers, you import a function from 'msw-dynamic-http-middleware' to create handlers for you, based on the scenarios you provide.
+Set up http-middleware as described in their docs, but instead of importing handlers, you import a function from `msw-dynamic-http-middleware` to create handlers for you, based on the scenarios you provide.
 
 ```javascript
 import { createServer } from '@mswjs/http-middleware';
@@ -49,3 +49,5 @@ httpServer.listen(9090);
 ```
 
 Endpoints that don't have a handler assigned (yet), for example when the server starts, return a default response, which is currently an empty body with status 200.
+
+Endpoints that do not exist because there are no scenarios defined for this endpoint, do return the default response from `@mswjs/http-middelware`, which is `{ "error": "Mock not found" }`.
