@@ -1,12 +1,22 @@
-import { pino } from 'pino';
-import { rest } from 'msw';
+import pino from 'pino';
+import { ResponseResolver, rest, RestHandler } from 'msw';
+import { Path } from 'node-match-path';
+
+export type Scenarios = Record<string, RestHandler | RestHandler[]>;
 
 const logger = pino({ prettyPrint: {
   translateTime: true,
   ignore: 'pid,hostname'
 } });
 
-const defaultResolver = (req, res, ctx) => res(ctx.status(200));
+const defaultResolver: ResponseResolver = (req, res, ctx) => res(ctx.status(200));
+
+const assertPath = (path: Path): path is string => {
+  if (path instanceof RegExp) {
+    throw new Error(`Only strings as path are supported`);
+  }
+  return true;
+}
 
 /**
  * Create REST endpoints (handlers) based on the given scenarios.
@@ -15,7 +25,7 @@ const defaultResolver = (req, res, ctx) => res(ctx.status(200));
  * @param {*} scenarios an object of RestHandlers with scenario name as key.
  * @returns RestHandler[]
  */
-export const createHandlers = scenarios => {
+export const createHandlers = (scenarios: Scenarios)  => {
   /* Store currently active resolvers by method and path, for example:
    * {
    *   '/user/': {
@@ -23,7 +33,7 @@ export const createHandlers = scenarios => {
    *   }
    * }
    */
-  const activeResolvers = {};
+  const activeResolvers: Record<string, Record<string, ResponseResolver>> = {};
 
   return [
     // Create mock endpoints for all defined scenarios. Possible duplicates
@@ -32,25 +42,27 @@ export const createHandlers = scenarios => {
       
       return handlers.map(handler => {
         const { method, path, header } = handler.info;
-        return rest[method.toLowerCase()](path, (req, res, ctx) => {
+        return rest[method.toLowerCase() as keyof typeof rest](path, (req, res, ctx) => {
           // Forward call to active resolver that comes from scenario or fall back to default resolver
-          let resolver = activeResolvers[path]?.[method];
-          
-          if (!resolver) {
-            resolver = defaultResolver
-            logger.info(`${header} (default resolver)`);
-          } else {
-            logger.info(header);
+          if (assertPath(path)) {
+            let resolver = activeResolvers[path]?.[method];
+            
+            if (!resolver) {
+              resolver = defaultResolver
+              logger.info(`${header} (default resolver)`);
+            } else {
+              logger.info(header);
+            }
+            
+            return resolver(req, res, ctx);
           }
-  
-          return resolver(req, res, ctx);
         });
       })
     }),
 
     // Create endpoint to set mock for any endpoint
     rest.put('/scenario', (req, res, ctx) => {
-      const scenarioName = req.body.scenario;
+      const scenarioName = (req.body as Record<string, any>)?.scenario;
 
       if (!scenarioName) {
         return res(
@@ -68,13 +80,15 @@ export const createHandlers = scenarios => {
 
       const headers = handlers.map(handler => {
         const { path, method, header } = handler.info;
-  
-        if (!(path in activeResolvers)) {
-          activeResolvers[path] = {};
+        if (assertPath(path)) {
+          if (!(path in activeResolvers)) {
+            activeResolvers[path] = {};
+          }
+          
+          // @ts-ignore resolver is protected but I don't care
+          activeResolvers[path][method] = handler.resolver;
+          return header;
         }
-  
-        activeResolvers[path][method] = handler.resolver;
-        return header;
       })
       
       logger.info(`Set scenario "${scenarioName}" with resolvers for endpoints: ${headers.join(', ')}`)

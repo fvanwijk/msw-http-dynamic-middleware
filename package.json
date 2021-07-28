@@ -1,13 +1,13 @@
 {
   "name": "msw-dynamic-http-middleware",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Create dynamic handlers for MSW HTTP middleware",
-  "main": "index.js",
+  "main": "index.ts",
   "files": [
-    "index.js"
+    "index.ts"
   ],
   "scripts": {
-    "start": "nodemon server.js"
+    "dev": "node --loader ts-node/esm --es-module-specifier-resolution=node server.ts"
   },
   "type": "module",
   "keywords": [
@@ -23,7 +23,10 @@
     "pino-pretty": "5.1.2"
   },
   "devDependencies": {
-    "nodemon": "2.0.12"
+    "@types/pino": "6.3.11",
+    "ts-node": "10.1.0",
+    "tslib": "1.14.1",
+    "typescript": "4.3.5"
   },
   "peerDependencies": {
     "@mswjs/http-middleware": ">=0.1.1",
