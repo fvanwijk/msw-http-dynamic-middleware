@@ -20,15 +20,20 @@ export const createHandlers = scenarios => {
   const activeResolvers = {};
 
   return [
-    // Create mock endpoints for all defined scenarios
-    ...Object.values(scenarios).map(handler => {
-      const { method, path } = handler.info;
-      return rest[method.toLowerCase()](path, (req, res, ctx) => {
-        // Forward call to active resolver that comes from scenario or fall back to default resolver
-        const resolver = activeResolvers[path]?.[method] || defaultResolver;
-
-        return resolver(req, res, ctx);
-      });
+    // Create mock endpoints for all defined scenarios. Possible duplicates
+    ...Object.values(scenarios).flatMap(handler => {
+      const handlers = Array.isArray(handler) ? handler : [handler];
+      
+      return handlers.map(handler => {
+        const { method, path } = handler.info;
+        return rest[method.toLowerCase()](path, (req, res, ctx) => {
+          // Forward call to active resolver that comes from scenario or fall back to default resolver
+          console.log('call', method, path, activeResolvers[path]?.[method])
+          const resolver = activeResolvers[path]?.[method] || defaultResolver;
+  
+          return resolver(req, res, ctx);
+        });
+      })
     }),
 
     // Create endpoint to set mock for any endpoint
