@@ -4,7 +4,7 @@
   "description": "Create dynamic handlers for MSW HTTP middleware",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon server.js"
   },
   "type": "module",
   "keywords": ["msw", "http-middleware", "rest", "mocks"],
