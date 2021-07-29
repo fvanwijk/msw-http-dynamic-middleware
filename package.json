@@ -46,8 +46,11 @@
   },
   "devDependencies": {
     "@mswjs/http-middleware": "0.1.1",
+    "@open-draft/test-server": "0.2.3",
+    "@types/node-fetch": "2.5.12",
     "@types/pino": "6.3.11",
     "msw": "0.33.1",
+    "node-fetch": "2.6.1",
     "prettier": "1.19.1",
     "ts-node": "10.1.0",
     "tsdx": "0.14.1",

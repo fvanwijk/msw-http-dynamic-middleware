@@ -4,10 +4,12 @@ import { Path } from 'node-match-path';
 
 export type Scenarios = Record<string, RestHandler | RestHandler[]>;
 
-const logger = pino({ prettyPrint: {
-  translateTime: true,
-  ignore: 'pid,hostname'
-} });
+const logger = pino({
+  prettyPrint: {
+    translateTime: true,
+    ignore: 'pid,hostname',
+  },
+});
 
 const defaultResolver: ResponseResolver = (_, res, ctx) => res(ctx.status(200));
 
@@ -16,14 +18,18 @@ const assertPath = (path: Path): path is string => {
     throw new Error(`Only strings as path are supported`);
   }
   return true;
-}
+};
 
-const setScenario = (scenarios: Scenarios, scenarioName: string, activeResolvers: Record<string, Record<string, ResponseResolver>>): void => {
+const setScenario = (
+  scenarios: Scenarios,
+  scenarioName: string,
+  activeResolvers: Record<string, Record<string, ResponseResolver>>,
+): void => {
   const handler = scenarios[scenarioName];
   if (!handler) {
     throw new Error(`Scenario "${scenarioName}" does not exist`);
   }
-  
+
   const handlers = Array.isArray(handler) ? handler : [handler];
 
   const headers = handlers.map(handler => {
@@ -32,16 +38,16 @@ const setScenario = (scenarios: Scenarios, scenarioName: string, activeResolvers
       if (!(path in activeResolvers)) {
         activeResolvers[path] = {};
       }
-      
+
       // @ts-ignore resolver is protected but I don't care
       activeResolvers[path][method] = handler.resolver;
       return header;
     }
     return;
-  })
-  
-  logger.info(`Set scenario "${scenarioName}" with resolvers for endpoints: ${headers.join(', ')}`)
-}
+  });
+
+  logger.info(`Set scenario "${scenarioName}" with resolvers for endpoints: ${headers.join(', ')}`);
+};
 
 /**
  * Create REST endpoints (handlers) based on the given scenarios.
@@ -51,7 +57,7 @@ const setScenario = (scenarios: Scenarios, scenarioName: string, activeResolvers
  * @param {string} [defaultScenarioName] set a scenario when the server starts
  * @returns RestHandler[]
  */
-export const createHandlers = (scenarios: Scenarios, defaultScenarioName?: string)  => {
+export const createHandlers = (scenarios: Scenarios, defaultScenarioName?: string) => {
   /* Store currently active resolvers by method and path, for example:
    * {
    *   '/user/': {
@@ -61,7 +67,7 @@ export const createHandlers = (scenarios: Scenarios, defaultScenarioName?: strin
    */
   let activeResolvers: Record<string, Record<string, ResponseResolver>> = {};
 
-  if (defaultScenarioName)  {
+  if (defaultScenarioName) {
     setScenario(scenarios, defaultScenarioName, activeResolvers);
   }
 
@@ -69,25 +75,28 @@ export const createHandlers = (scenarios: Scenarios, defaultScenarioName?: strin
     // Create mock endpoints for all defined scenarios. Possible duplicates
     ...Object.values(scenarios).flatMap(handler => {
       const handlers = Array.isArray(handler) ? handler : [handler];
-      
+
       return handlers.map(handler => {
         const { method, path, header } = handler.info;
+
+        assertPath(path);
+
         return rest[method.toLowerCase() as keyof typeof rest](path, (req, res, ctx) => {
           // Forward call to active resolver that comes from scenario or fall back to default resolver
           if (assertPath(path)) {
             let resolver = activeResolvers[path]?.[method];
-            
+
             if (!resolver) {
-              resolver = defaultResolver
+              resolver = defaultResolver;
               logger.info(`${header} (default resolver)`);
             } else {
               logger.info(header);
             }
-            
+
             return resolver(req, res, ctx);
           }
         });
-      })
+      });
     }),
 
     // Create endpoint to set mock for any endpoint
@@ -104,7 +113,7 @@ export const createHandlers = (scenarios: Scenarios, defaultScenarioName?: strin
       try {
         setScenario(scenarios, scenarioName, activeResolvers);
       } catch (error) {
-        res(ctx.status(400), ctx.text(error.message))
+        res(ctx.status(400), ctx.text(error.message));
       }
 
       return res(ctx.status(205));
@@ -124,6 +133,6 @@ export const createHandlers = (scenarios: Scenarios, defaultScenarioName?: strin
       }
 
       return res(ctx.status(205));
-    })
+    }),
   ];
 };
