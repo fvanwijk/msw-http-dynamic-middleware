@@ -33,7 +33,7 @@ export const createHandlers = (scenarios: Scenarios)  => {
    *   }
    * }
    */
-  const activeResolvers: Record<string, Record<string, ResponseResolver>> = {};
+  let activeResolvers: Record<string, Record<string, ResponseResolver>> = {};
 
   return [
     // Create mock endpoints for all defined scenarios. Possible duplicates
@@ -96,5 +96,12 @@ export const createHandlers = (scenarios: Scenarios)  => {
 
       return res(ctx.status(205));
     }),
+
+    // Reset all active scenarios
+    rest.delete('/scenario', (req, res, ctx) => {
+      activeResolvers = {};
+
+      return res(ctx.status(205));
+    })
   ];
 };
