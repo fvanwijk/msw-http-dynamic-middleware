@@ -18,14 +18,40 @@ const assertPath = (path: Path): path is string => {
   return true;
 }
 
+const setScenario = (scenarios: Scenarios, scenarioName: string, activeResolvers: Record<string, Record<string, ResponseResolver>>): void => {
+  const handler = scenarios[scenarioName];
+  if (!handler) {
+    throw new Error(`Scenario "${scenarioName}" does not exist`);
+  }
+  
+  const handlers = Array.isArray(handler) ? handler : [handler];
+
+  const headers = handlers.map(handler => {
+    const { path, method, header } = handler.info;
+    if (assertPath(path)) {
+      if (!(path in activeResolvers)) {
+        activeResolvers[path] = {};
+      }
+      
+      // @ts-ignore resolver is protected but I don't care
+      activeResolvers[path][method] = handler.resolver;
+      return header;
+    }
+    return;
+  })
+  
+  logger.info(`Set scenario "${scenarioName}" with resolvers for endpoints: ${headers.join(', ')}`)
+}
+
 /**
  * Create REST endpoints (handlers) based on the given scenarios.
  * When a scenario is set using PUT /scenario, the path and method of the scenario handler are used as keys in the activeResolvers map and the resolver is used as value
  *
- * @param {*} scenarios an object of RestHandlers with scenario name as key.
+ * @param {Scenarios} scenarios an object of RestHandlers with scenario name as key.
+ * @param {string} [defaultScenarioName] set a scenario when the server starts
  * @returns RestHandler[]
  */
-export const createHandlers = (scenarios: Scenarios)  => {
+export const createHandlers = (scenarios: Scenarios, defaultScenarioName?: string)  => {
   /* Store currently active resolvers by method and path, for example:
    * {
    *   '/user/': {
@@ -34,6 +60,10 @@ export const createHandlers = (scenarios: Scenarios)  => {
    * }
    */
   let activeResolvers: Record<string, Record<string, ResponseResolver>> = {};
+
+  if (defaultScenarioName)  {
+    setScenario(scenarios, defaultScenarioName, activeResolvers);
+  }
 
   return [
     // Create mock endpoints for all defined scenarios. Possible duplicates
@@ -70,29 +100,12 @@ export const createHandlers = (scenarios: Scenarios)  => {
           ctx.text(`Please provide a scenario name in the request body. Example: { "scenario": "user success" }`),
         );
       }
-      
-      const handler = scenarios[scenarioName];
-      if (!handler) {
-        return res(ctx.status(400), ctx.text(`Scenario "${scenarioName}" does not exist`));
-      }
-      
-      const handlers = Array.isArray(handler) ? handler : [handler];
 
-      const headers = handlers.map(handler => {
-        const { path, method, header } = handler.info;
-        if (assertPath(path)) {
-          if (!(path in activeResolvers)) {
-            activeResolvers[path] = {};
-          }
-          
-          // @ts-ignore resolver is protected but I don't care
-          activeResolvers[path][method] = handler.resolver;
-          return header;
-        }
-        return;
-      })
-      
-      logger.info(`Set scenario "${scenarioName}" with resolvers for endpoints: ${headers.join(', ')}`)
+      try {
+        setScenario(scenarios, scenarioName, activeResolvers);
+      } catch (error) {
+        res(ctx.status(400), ctx.text(error.message))
+      }
 
       return res(ctx.status(205));
     }),
@@ -100,6 +113,15 @@ export const createHandlers = (scenarios: Scenarios)  => {
     // Reset all active scenarios
     rest.delete('/scenario', (req, res, ctx) => {
       activeResolvers = {};
+
+      const resetAll: string | null = req.url.searchParams.get('resetAll');
+
+      if (defaultScenarioName && resetAll?.toLowerCase() !== 'true') {
+        logger.info('Reset server to default scenario');
+        setScenario(scenarios, defaultScenarioName, activeResolvers);
+      } else {
+        logger.info('Reset all handlers to default resolver');
+      }
 
       return res(ctx.status(205));
     })

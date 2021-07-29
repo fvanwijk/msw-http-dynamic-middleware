@@ -1,6 +1,6 @@
 {
   "name": "msw-dynamic-http-middleware",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Create dynamic handlers for MSW HTTP middleware",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",

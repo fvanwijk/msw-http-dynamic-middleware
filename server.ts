@@ -28,7 +28,7 @@ const scenarios: Scenarios = {
   ],
 };
 
-const handlers = createHandlers(scenarios);
+const handlers = createHandlers(scenarios, 'success');
 
 const httpServer = createServer(...handlers);
 
