@@ -3,10 +3,12 @@ import { createServer } from '@mswjs/http-middleware';
 import { createHandlers, Scenarios } from './src/index';
 import pino from 'pino';
 
-const logger = pino({ prettyPrint: {
-  translateTime: true,
-  ignore: 'pid,hostname'
-} });
+const logger = pino({
+  prettyPrint: {
+    translateTime: true,
+    ignore: 'pid,hostname',
+  },
+});
 
 const scenarios: Scenarios = {
   // Scenarios for one endpoint
@@ -16,8 +18,14 @@ const scenarios: Scenarios = {
   'users error': rest.get('/users', (req, res, ctx) => res(ctx.status(500))),
 
   // Scenarios for multiple endpoints
-  'success': [rest.get('/user', (req, res, ctx) => res(ctx.json({ name: 'frank' }))), rest.get('/users', (req, res, ctx) => res(ctx.json([{ name: 'frank' }])))],
-  'error': [rest.get('/user', (req, res, ctx) => res(ctx.status(500))), rest.get('/users', (req, res, ctx) => res(ctx.status(500)))],
+  success: [
+    rest.get('/user', (req, res, ctx) => res(ctx.json({ name: 'frank' }))),
+    rest.get('/users', (req, res, ctx) => res(ctx.json([{ name: 'frank' }]))),
+  ],
+  error: [
+    rest.get('/user', (req, res, ctx) => res(ctx.status(500))),
+    rest.get('/users', (req, res, ctx) => res(ctx.status(500))),
+  ],
 };
 
 const handlers = createHandlers(scenarios);

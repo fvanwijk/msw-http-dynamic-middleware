@@ -27,13 +27,25 @@
     "mocks"
   ],
   "author": "Frank van Wijk <info@frankvanwijk.nl>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fvanwijk/msw-http-dynamic-middleware.git"
+  },
   "license": "MIT",
+  "prettier": {
+    "arrowParens": "avoid",
+    "semi": true,
+    "singleQuote": true,
+    "printWidth": 120,
+    "trailingComma": "all"
+  },
   "dependencies": {
     "pino": "6.13.0",
     "pino-pretty": "5.1.2"
   },
   "devDependencies": {
     "@types/pino": "6.3.11",
+    "prettier": "1.19.1",
     "ts-node": "10.1.0",
     "tsdx": "0.14.1",
     "tslib": "1.14.1",

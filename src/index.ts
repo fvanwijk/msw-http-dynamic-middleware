@@ -70,7 +70,7 @@ export const createHandlers = (scenarios: Scenarios)  => {
           ctx.text(`Please provide a scenario name in the request body. Example: { "scenario": "user success" }`),
         );
       }
-
+      
       const handler = scenarios[scenarioName];
       if (!handler) {
         return res(ctx.status(400), ctx.text(`Scenario "${scenarioName}" does not exist`));
