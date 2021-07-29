@@ -40,11 +40,14 @@
     "trailingComma": "all"
   },
   "dependencies": {
+    "@types/jest": "26.0.24",
     "pino": "6.13.0",
     "pino-pretty": "5.1.2"
   },
   "devDependencies": {
+    "@mswjs/http-middleware": "0.1.1",
     "@types/pino": "6.3.11",
+    "msw": "0.33.1",
     "prettier": "1.19.1",
     "ts-node": "10.1.0",
     "tsdx": "0.14.1",
