@@ -19,16 +19,44 @@ var assertPath = function assertPath(path) {
 
   return true;
 };
+
+var setScenario = function setScenario(scenarios, scenarioName, activeResolvers) {
+  var handler = scenarios[scenarioName];
+
+  if (!handler) {
+    throw new Error("Scenario \"" + scenarioName + "\" does not exist");
+  }
+
+  var handlers = Array.isArray(handler) ? handler : [handler];
+  var headers = handlers.map(function (handler) {
+    var _handler$info = handler.info,
+        path = _handler$info.path,
+        method = _handler$info.method,
+        header = _handler$info.header;
+
+    if (assertPath(path)) {
+      if (!(path in activeResolvers)) {
+        activeResolvers[path] = {};
+      } // @ts-ignore resolver is protected but I don't care
+
+
+      activeResolvers[path][method] = handler.resolver;
+      return header;
+    }
+  });
+  logger.info("Set scenario \"" + scenarioName + "\" with resolvers for endpoints: " + headers.join(', '));
+};
 /**
  * Create REST endpoints (handlers) based on the given scenarios.
  * When a scenario is set using PUT /scenario, the path and method of the scenario handler are used as keys in the activeResolvers map and the resolver is used as value
  *
- * @param {*} scenarios an object of RestHandlers with scenario name as key.
+ * @param {Scenarios} scenarios an object of RestHandlers with scenario name as key.
+ * @param {string} [defaultScenarioName] set a scenario when the server starts
  * @returns RestHandler[]
  */
 
 
-var createHandlers = function createHandlers(scenarios) {
+var createHandlers = function createHandlers(scenarios, defaultScenarioName) {
   /* Store currently active resolvers by method and path, for example:
    * {
    *   '/user/': {
@@ -37,13 +65,18 @@ var createHandlers = function createHandlers(scenarios) {
    * }
    */
   var activeResolvers = {};
+
+  if (defaultScenarioName) {
+    setScenario(scenarios, defaultScenarioName, activeResolvers);
+  }
+
   return [].concat(Object.values(scenarios).flatMap(function (handler) {
     var handlers = Array.isArray(handler) ? handler : [handler];
     return handlers.map(function (handler) {
-      var _handler$info = handler.info,
-          method = _handler$info.method,
-          path = _handler$info.path,
-          header = _handler$info.header;
+      var _handler$info2 = handler.info,
+          method = _handler$info2.method,
+          path = _handler$info2.path,
+          header = _handler$info2.header;
       return rest[method.toLowerCase()](path, function (req, res, ctx) {
         // Forward call to active resolver that comes from scenario or fall back to default resolver
         if (assertPath(path)) {
@@ -72,30 +105,25 @@ var createHandlers = function createHandlers(scenarios) {
       return res(ctx.status(400), ctx.text("Please provide a scenario name in the request body. Example: { \"scenario\": \"user success\" }"));
     }
 
-    var handler = scenarios[scenarioName];
-
-    if (!handler) {
-      return res(ctx.status(400), ctx.text("Scenario \"" + scenarioName + "\" does not exist"));
+    try {
+      setScenario(scenarios, scenarioName, activeResolvers);
+    } catch (error) {
+      res(ctx.status(400), ctx.text(error.message));
     }
 
-    var handlers = Array.isArray(handler) ? handler : [handler];
-    var headers = handlers.map(function (handler) {
-      var _handler$info2 = handler.info,
-          path = _handler$info2.path,
-          method = _handler$info2.method,
-          header = _handler$info2.header;
+    return res(ctx.status(205));
+  }), // Reset all active scenarios
+  rest["delete"]('/scenario', function (req, res, ctx) {
+    activeResolvers = {};
+    var resetAll = req.url.searchParams.get('resetAll');
 
-      if (assertPath(path)) {
-        if (!(path in activeResolvers)) {
-          activeResolvers[path] = {};
-        } // @ts-ignore resolver is protected but I don't care
+    if (defaultScenarioName && (resetAll == null ? void 0 : resetAll.toLowerCase()) !== 'true') {
+      logger.info('Reset server to default scenario');
+      setScenario(scenarios, defaultScenarioName, activeResolvers);
+    } else {
+      logger.info('Reset all handlers to default resolver');
+    }
 
-
-        activeResolvers[path][method] = handler.resolver;
-        return header;
-      }
-    });
-    logger.info("Set scenario \"" + scenarioName + "\" with resolvers for endpoints: " + headers.join(', '));
     return res(ctx.status(205));
   })]);
 };
