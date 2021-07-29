@@ -19,11 +19,20 @@ For example when you want to set the scenario 'user success', just call this end
 The success scenario is a predefined MSW handler.
 You need scenarios because MSW handlers are not (easily) serializable and a scenario name is.
 
+## Clearing handlers
+
+Endpoints that don't have a handler assigned (yet), for example when the server starts, return a default response, which is currently an empty body with status 200.
+However, you could pass a default scenario name to `createHandlers` to start the server with an initial set of handlers.
+
+Besides setting scenarios on runtime using the `PUT /scenarios` endpoint, you could also reset state to the default handler using the `DELETE /scenarios` call. If the handlers were created with a default scenario, the default scenario is also set, unless you pass `?clearAll=true` query parameter.
+
+Endpoints that do not exist because there are no scenarios defined for this endpoint, do return the default response from `@mswjs/http-middelware`, which is `{ "error": "Mock not found" }` with status 404.
+
 ## Does this package work with MSW only?
 
 This package builds upon @mswjs/http-middleware but if you want to set predefined scenarios for vanilla MSW handlers, consider using [MSW UI](https://github.com/fvanwijk/msw-ui).
 
-## How to use
+## Installation
 
 First install this package and @msw/http-middleware as devDependency:
 
@@ -55,13 +64,9 @@ const scenarios = {
   ],
 };
 
-const handlers = createHandlers(scenarios);
+const handlers = createHandlers(scenarios, 'success'); // Success scenario is set on initialization
 
 const httpServer = createServer(...handlers);
 
 httpServer.listen(9090);
 ```
-
-Endpoints that don't have a handler assigned (yet), for example when the server starts, return a default response, which is currently an empty body with status 200.
-
-Endpoints that do not exist because there are no scenarios defined for this endpoint, do return the default response from `@mswjs/http-middelware`, which is `{ "error": "Mock not found" }` with status 404.
