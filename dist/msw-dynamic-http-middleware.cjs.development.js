@@ -83,6 +83,7 @@ var createHandlers = function createHandlers(scenarios, defaultScenarioName) {
           method = _handler$info2.method,
           path = _handler$info2.path,
           header = _handler$info2.header;
+      assertPath(path);
       return msw.rest[method.toLowerCase()](path, function (req, res, ctx) {
         // Forward call to active resolver that comes from scenario or fall back to default resolver
         if (assertPath(path)) {
