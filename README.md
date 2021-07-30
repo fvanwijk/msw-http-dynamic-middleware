@@ -25,7 +25,7 @@ You need scenarios because MSW handlers are not (easily) serializable and a scen
 Endpoints that don't have a handler assigned (yet), for example when the server starts, return a default response, which is currently an empty body with status 200.
 However, you could pass a default scenario name to `createHandlers` to start the server with an initial set of handlers.
 
-Besides setting scenarios on runtime using the `PUT /scenarios` endpoint, you could also reset state to the default handler using the `DELETE /scenarios` call. If the handlers were created with a default scenario, the default scenario is also set, unless you pass `?clearAll=true` query parameter.
+Besides setting scenarios on runtime using the `PUT /scenarios` endpoint, you could also reset state to the default handler using the `DELETE /scenarios` call. If the handlers were created with a default scenario, the default scenario is also set, unless you pass `?resetAll=true` query parameter.
 
 Endpoints that do not exist because there are no scenarios defined for this endpoint, do return the default response from `@mswjs/http-middelware`, which is `{ "error": "Mock not found" }` with status 404.
 
