@@ -99,6 +99,10 @@ export const createHandlers = (scenarios: Scenarios, defaultScenarioName?: strin
       });
     }),
 
+    rest.get('/scenario', (req, res, ctx) => {
+      return res(ctx.json(scenarios));
+    }),
+
     // Create endpoint to set mock for any endpoint
     rest.put('/scenario', (req, res, ctx) => {
       const scenarioName = (req.body as Record<string, any>)?.scenario;
