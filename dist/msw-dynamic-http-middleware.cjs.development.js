@@ -102,7 +102,9 @@ var createHandlers = function createHandlers(scenarios, defaultScenarioName) {
         }
       });
     });
-  }), [// Create endpoint to set mock for any endpoint
+  }), [msw.rest.get('/scenario', function (_, res, ctx) {
+    return res(ctx.json(scenarios));
+  }), // Create endpoint to set mock for any endpoint
   msw.rest.put('/scenario', function (req, res, ctx) {
     var _req$body;
 

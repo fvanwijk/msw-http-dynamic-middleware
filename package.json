@@ -12,11 +12,16 @@
     "node": ">=14"
   },
   "scripts": {
-    "start": "tsdx watch --tsconfig tsconfig.tsdx.json",
-    "build": "tsdx build --tsconfig tsconfig.tsdx.json",
+    "start": "npm run start:lib & npm run start:app & npm run start:server",
+    "start:lib": "tsdx watch --tsconfig tsconfig.tsdx.json",
+    "start:app": "cd msw-ui && npm run dev",
+    "start:server": "node --loader ts-node/esm --es-module-specifier-resolution=node server.ts",
+    "build": "npm run build:lib && npm run build:app",
+    "build:lib": "tsdx build --tsconfig tsconfig.tsdx.json",
+    "build:app": "cd msw-ui && npm run build",
     "test": "tsdx test",
     "lint": "tsdx lint",
-    "server": "node --loader ts-node/esm --es-module-specifier-resolution=node server.ts",
+    "server": "",
     "prepublish": "npm run lint && npm run test && npm run build"
   },
   "type": "module",

@@ -99,7 +99,7 @@ export const createHandlers = (scenarios: Scenarios, defaultScenarioName?: strin
       });
     }),
 
-    rest.get('/scenario', (req, res, ctx) => {
+    rest.get('/scenario', (_, res, ctx) => {
       return res(ctx.json(scenarios));
     }),
 
