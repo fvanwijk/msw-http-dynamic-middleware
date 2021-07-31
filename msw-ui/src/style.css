@@ -1,8 +1,33 @@
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+@tailwind base;
+
+@layer base {
+  #app {
+    @apply p-4;
+  }
+
+  h1 {
+    @apply text-4xl font-bold;
+  }
+  h2 {
+    @apply text-xl font-medium mb-4 mt-8;
+  }
+
+  button {
+    @apply px-3 py-2 mr-2 bg-blue-700 hover:bg-blue-600 text-white rounded;
+  }
+
+  table tr th {
+    @apply text-gray-600 font-medium;
+  }
+  table tr td,
+  table tr th {
+    @apply px-4 py-2 text-left;
+  }
+  table tr td:first-child,
+  table tr th:first-child {
+    @apply pl-0;
+  }
 }
+
+@tailwind components;
+@tailwind utilities;

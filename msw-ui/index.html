@@ -8,12 +8,12 @@
   </head>
   <body>
     <div id="app">
-      <h1>MSW UI</h1>
+      <div class="text-center">
+        <h1>MSW UI</h1>
+      </div>
+
       <h2>Set global scenario</h2>
       <div id="global-scenarios"></div>
-      <!-- <button v-for="[scenario] of globalScenarios" @click="setScenario(scenario)">
-        {{ scenario }}
-      </button> -->
 
       <h2>Set scenario per handler</h2>
 
@@ -25,17 +25,7 @@
             <th>Scenario</th>
           </tr>
         </thead>
-        <tbody id="scenarios-per-handler">
-          <!-- <tr v-for="(endpoint, key) of scenariosPerHandler" :key="key">
-            <td>{{ endpoint.method }}</td>
-            <td>{{ endpoint.path }}</td>
-            <td>
-              <button v-for="scenario of endpoint.scenarios" :key="scenario" @click="setScenario(scenario)">
-                {{ scenario }}
-              </button>
-            </td>
-          </tr> -->
-        </tbody>
+        <tbody id="scenarios-per-handler"></tbody>
       </table>
     </div>
     <script type="module" src="/src/main.ts"></script>
