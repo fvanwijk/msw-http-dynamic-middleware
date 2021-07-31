@@ -1,5 +1,6 @@
+import express from 'express';
 import { rest } from 'msw';
-import { createServer } from '@mswjs/http-middleware';
+import { createMiddleware } from '@mswjs/http-middleware';
 import { createHandlers, Scenarios } from './src/index';
 import pino from 'pino';
 
@@ -30,8 +31,10 @@ const scenarios: Scenarios = {
 
 const handlers = createHandlers(scenarios, 'success');
 
-const httpServer = createServer(...handlers);
+const app = express();
 
-httpServer.listen(9090);
+app.use(express.json());
+app.use(createMiddleware(...handlers));
 
-logger.info('MSW server running at http://localhost:9090');
+const port = 9800;
+app.listen(port, () => logger.info(`MSW server running at http://localhost:${port}`));

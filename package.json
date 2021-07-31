@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "@types/jest": "26.0.24",
+    "express": "4.17.1",
     "pino": "6.13.0",
     "pino-pretty": "5.1.2"
   },
