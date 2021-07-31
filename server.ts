@@ -33,6 +33,7 @@ const handlers = createHandlers(scenarios, 'success');
 
 const app = express();
 
+app.use(express.static('msw-ui/dist'));
 app.use(express.json());
 app.use(createMiddleware(...handlers));
 
