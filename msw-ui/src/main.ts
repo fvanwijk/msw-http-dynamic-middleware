@@ -8,7 +8,8 @@ const scenarios: Record<string, RestHandler | RestHandler[]> = await fetch('/sce
 const scenariosPerHandler = Object.entries(scenarios)
   .filter(([_, handlers]) => !Array.isArray(handlers))
   // Group by endpoint (info.header)
-  .reduce((acc, [scenarioName, { info }]) => {
+  .reduce((acc, scenarios) => {
+    const [scenarioName, { info }] = scenarios as [string, RestHandler];
     const key = info.header;
     const [method, path] = key.split(' ');
     if (!(key in acc)) {
