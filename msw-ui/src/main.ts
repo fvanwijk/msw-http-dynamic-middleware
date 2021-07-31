@@ -3,7 +3,7 @@ import './style.css';
 
 /* Data */
 
-const scenarios: Record<string, RestHandler | RestHandler[]> = await fetch('/api/scenario').then(res => res.json());
+const scenarios: Record<string, RestHandler | RestHandler[]> = await fetch('/scenario').then(res => res.json());
 
 const scenariosPerHandler = Object.entries(scenarios)
   .filter(([_, handlers]) => !Array.isArray(handlers))
@@ -25,7 +25,7 @@ const createButton = (scenario: string) => {
   const button = document.createElement('button');
   button.innerText = scenario;
   button.addEventListener('click', () => {
-    fetch('api/scenario', {
+    fetch('/scenario', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ scenario }),
