@@ -21,12 +21,7 @@ const scenariosPerHandler = Object.entries(scenarios)
 
 const globalScenarios = Object.entries(scenarios).filter(([_, handlers]) => Array.isArray(handlers));
 
-/* Global scenarios */
-
-const div = document.querySelector<HTMLDivElement>('#global-scenarios')!;
-div.innerHTML = '';
-
-globalScenarios.forEach(([scenario]) => {
+const createButton = (scenario: string) => {
   const button = document.createElement('button');
   button.innerText = scenario;
   button.addEventListener('click', () => {
@@ -36,6 +31,16 @@ globalScenarios.forEach(([scenario]) => {
       body: JSON.stringify({ scenario }),
     });
   });
+  return button;
+};
+
+/* Global scenarios */
+
+const div = document.querySelector<HTMLDivElement>('#global-scenarios')!;
+div.innerHTML = '';
+
+globalScenarios.forEach(([scenario]) => {
+  const button = createButton(scenario);
   div.appendChild(button);
 });
 
@@ -56,7 +61,12 @@ Object.values(scenariosPerHandler).forEach(endpoint => {
   const { method, path, scenarios } = endpoint;
   tr.appendChild(createCell(method));
   tr.appendChild(createCell(path));
-  tr.appendChild(createCell(scenarios.map(s => `<button>${s}</button>`).join('')));
+
+  const td = document.createElement('td');
+  scenarios.forEach(scenario => {
+    td.appendChild(createButton(scenario));
+  });
+  tr.appendChild(td);
 
   tbody.appendChild(tr);
 });
