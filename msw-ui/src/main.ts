@@ -29,6 +29,13 @@ div.innerHTML = '';
 globalScenarios.forEach(([scenario]) => {
   const button = document.createElement('button');
   button.innerText = scenario;
+  button.addEventListener('click', () => {
+    fetch('api/scenario', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ scenario }),
+    });
+  });
   div.appendChild(button);
 });
 
