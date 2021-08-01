@@ -1,7 +1,7 @@
 {
   "name": "msw-dynamic-http-middleware",
-  "version": "0.6.1",
-  "description": "Create dynamic handlers for MSW HTTP middleware",
+  "version": "0.7.0",
+  "description": "Set API handlers for your mock server on runtime",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "files": [
