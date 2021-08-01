@@ -17,11 +17,11 @@ This package is an extension on top of `@mswjs/http-middleware` that adds extra 
 
 The following endpoints are available:
 
-| Endpoint | When to use
-| ---
-| GET /scenario | Get all loaded scenarios and activated handlers
-| PUT /scenario | Activate a scenario
-| DELETE /scenario | Reset mock server to initial state, optionally with `?resetAll=true` to also deactive default scenario handlers
+| Endpoint         | When to use                                                                                                     |
+| ---------------- | --------------------------------------------------------------------------------------------------------------- |
+| GET /scenario    | Get all loaded scenarios and activated handlers                                                                 |
+| PUT /scenario    | Activate a scenario                                                                                             |
+| DELETE /scenario | Reset mock server to initial state, optionally with `?resetAll=true` to also deactive default scenario handlers |
 
 There is also a UI provided that can be statically hosted on for example `/ui`, so that you can set scenarios from the browser instead of using `curl` / Postman. Note that GraphQL is not supported (yet).
 
@@ -89,7 +89,7 @@ PUT /scenario
 
 You need scenarios because MSW handlers are not (easily) serializable and a scenario name is.
 
-Check the docs for your favorite client framework on how to proxy API calls to this web server
+Check the docs for your favorite client framework on how to proxy API calls to this web server.
 Here are some examples.
 
 Vue CLI:
