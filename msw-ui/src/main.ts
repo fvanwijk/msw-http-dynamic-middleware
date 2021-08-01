@@ -1,16 +1,21 @@
-import { RestHandler } from 'msw';
 import './style.css';
 
 /* Data */
 
+type RestHandlerInfo = { header: string; method: string; path: string };
+
 const startApp = async () => {
-  const scenarios: Record<string, RestHandler | RestHandler[]> = await fetch('/scenario').then(res => res.json());
+  const res: { scenarios: Record<string, RestHandlerInfo | RestHandlerInfo[]> } = await fetch('/scenario').then(res =>
+    res.json(),
+  );
+
+  const scenarios = res.scenarios;
 
   const scenariosPerHandler = Object.entries(scenarios)
     .filter(([_, handlers]) => !Array.isArray(handlers))
     // Group by endpoint (info.header)
     .reduce((acc, scenarios) => {
-      const [scenarioName, { info }] = scenarios as [string, RestHandler];
+      const [scenarioName, info] = scenarios as [string, RestHandlerInfo];
       const key = info.header;
       const [method, path] = key.split(' ');
       if (!(key in acc)) {

@@ -101,7 +101,34 @@ var createHandlers = function createHandlers(scenarios, defaultScenarioName) {
       });
     });
   }), [rest.get('/scenario', function (_, res, ctx) {
-    return res(ctx.json(scenarios));
+    var mappedScenarios = Object.entries(scenarios).reduce(function (acc, _ref) {
+      var scenarioName = _ref[0],
+          handlers = _ref[1];
+
+      var toInfoLite = function toInfoLite(_ref2) {
+        var header = _ref2.header,
+            method = _ref2.method,
+            path = _ref2.path;
+        return {
+          header: header,
+          method: method,
+          path: path.toString()
+        };
+      };
+
+      if (Array.isArray(handlers)) {
+        acc[scenarioName] = handlers.map(function (handler) {
+          return toInfoLite(handler.info);
+        });
+      } else {
+        acc[scenarioName] = toInfoLite(handlers.info);
+      }
+
+      return acc;
+    }, {});
+    return res(ctx.json({
+      scenarios: mappedScenarios
+    }));
   }), // Create endpoint to set mock for any endpoint
   rest.put('/scenario', function (req, res, ctx) {
     var _req$body;
@@ -115,7 +142,7 @@ var createHandlers = function createHandlers(scenarios, defaultScenarioName) {
     try {
       setScenario(scenarios, scenarioName, activeResolvers);
     } catch (error) {
-      res(ctx.status(400), ctx.text(error.message));
+      return res(ctx.status(400), ctx.text(error.message));
     }
 
     return res(ctx.status(205));
