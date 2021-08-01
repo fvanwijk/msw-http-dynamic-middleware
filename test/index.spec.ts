@@ -3,7 +3,6 @@ import { ServerApi, createServer } from '@open-draft/test-server';
 import { rest, RestHandler } from 'msw';
 import fetch from 'node-fetch';
 import { createHandlers } from '../src';
-const r = new RegExp('user');
 
 const scenarios = {
   // Scenarios for one endpoint
