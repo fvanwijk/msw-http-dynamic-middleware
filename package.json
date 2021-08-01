@@ -12,8 +12,7 @@
     "node": ">=14"
   },
   "scripts": {
-    "start": "npm run start:lib & npm run start:app",
-    "start:lib": "tsdx watch --tsconfig tsconfig.tsdx.json",
+    "start": "tsdx watch --tsconfig tsconfig.tsdx.json",
     "build": "npm run build:lib && npm run build:app && npm run copy:app",
     "build:lib": "tsdx build --tsconfig tsconfig.tsdx.json",
     "build:app": "cd msw-ui && npm run build",
