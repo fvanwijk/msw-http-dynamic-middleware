@@ -31,6 +31,14 @@ const setup = (handlers: RestHandler[]): Promise<ServerApi> => {
   });
 };
 
+const setScenario = async (scenarioName?: string) => {
+  return await fetch(server.http.makeUrl('/scenario'), {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ scenario: scenarioName }),
+  });
+};
+
 const assertJson = async (path: string, json: any) => {
   const res = await fetch(server.http.makeUrl(path));
   expect(await res.json()).toEqual(json);
@@ -51,6 +59,17 @@ describe('createHandlers', () => {
     server = await setup(createHandlers(scenarios));
 
     await assertText('/user', '');
+
+    server.close();
+  });
+
+  it('should return 404 for handlers that are not in a scenario', async () => {
+    server = await setup(createHandlers(scenarios));
+
+    const res = await fetch(server.http.makeUrl('/not-exist'));
+    expect(res.status).toBe(404);
+
+    server.close();
   });
 
   describe('initial scenario', () => {
@@ -67,6 +86,8 @@ describe('createHandlers', () => {
 
       await assertJson('/user', { name: 'frank' });
       await assertJson('/users', [{ name: 'frank' }]);
+
+      server.close();
     });
 
     it('should throw error when initial scenario does not exist', async () => {
@@ -78,10 +99,109 @@ describe('createHandlers', () => {
 
   describe('GET /scenario', () => {
     it('should return the map with scenarios and handler info', async () => {
-      server = await setup(createHandlers(scenarios, 'user success'));
+      server = await setup(createHandlers(scenarios));
 
       const json = await fetch(server.http.makeUrl('/scenario')).then(res => res.json());
       expect(json.scenarios).toMatchSnapshot();
+
+      server.close();
+    });
+  });
+
+  describe('PUT /scenario', () => {
+    it('should return error with status 400 when no scenario given in body', async () => {
+      server = await setup(createHandlers(scenarios));
+
+      const res = await setScenario();
+      expect(await res.text()).toBe(
+        'Please provide a scenario name in the request body. Example: { "scenario": "user success" }',
+      );
+      expect(await res.status).toBe(400);
+
+      server.close();
+    });
+
+    it('should return error with status 400 when the scenario does not exist', async () => {
+      server = await setup(createHandlers(scenarios));
+
+      const res = await setScenario('not-exist');
+
+      expect(await res.text()).toBe('Scenario "not-exist" does not exist');
+      expect(await res.status).toBe(400);
+
+      server.close();
+    });
+
+    it('should set the scenario and return status 205', async () => {
+      server = await setup(createHandlers(scenarios));
+
+      // No mock set
+      const userRes = await fetch(server.http.makeUrl('/user'));
+      expect(userRes.status).toBe(200);
+      expect(await userRes.text()).toBe('');
+
+      // Success mock set
+      const res = await setScenario('user success');
+      expect(res.status).toBe(205);
+
+      await assertJson('/user', { name: 'frank' });
+
+      // Error mock set
+      await setScenario('user error');
+
+      const userErrorRes = await fetch(server.http.makeUrl('/user'));
+      expect(userErrorRes.status).toBe(500);
+      expect(await userErrorRes.text()).toBe('');
+
+      server.close();
+    });
+  });
+
+  describe('DELETE /scenario', () => {
+    it('should reset the server', async () => {
+      server = await setup(createHandlers(scenarios));
+
+      setScenario('user success');
+
+      await assertJson('/user', { name: 'frank' });
+
+      await fetch(server.http.makeUrl('/scenario'), { method: 'DELETE' });
+
+      await assertText('/user', '');
+
+      server.close();
+    });
+
+    it('should reset the server to initial state', async () => {
+      server = await setup(createHandlers(scenarios, 'user success'));
+
+      setScenario('users success');
+
+      await assertJson('/user', { name: 'frank' });
+      await assertJson('/users', [{ name: 'frank' }]);
+
+      await fetch(server.http.makeUrl('/scenario'), { method: 'DELETE' });
+
+      await assertJson('/user', { name: 'frank' });
+      await assertText('/users', '');
+
+      server.close();
+    });
+
+    it('should reset the server completely when query param is given', async () => {
+      server = await setup(createHandlers(scenarios, 'user success'));
+
+      setScenario('users success');
+
+      await assertJson('/user', { name: 'frank' });
+      await assertJson('/users', [{ name: 'frank' }]);
+
+      await fetch(server.http.makeUrl('/scenario?resetAll=true'), { method: 'DELETE' });
+
+      await assertText('/user', '');
+      await assertText('/users', '');
+
+      server.close();
     });
   });
 });

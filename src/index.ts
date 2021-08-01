@@ -134,7 +134,7 @@ export const createHandlers = (scenarios: Scenarios, defaultScenarioName?: strin
       try {
         setScenario(scenarios, scenarioName, activeResolvers);
       } catch (error) {
-        res(ctx.status(400), ctx.text(error.message));
+        return res(ctx.status(400), ctx.text(error.message));
       }
 
       return res(ctx.status(205));
