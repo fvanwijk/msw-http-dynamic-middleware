@@ -1,5 +1,9 @@
 import pino from 'pino';
 import { rest } from 'msw';
+import path from 'path';
+import express from 'express';
+
+var middleware = /*#__PURE__*/express["static"]( /*#__PURE__*/path.join(__dirname, 'ui'));
 
 var logger = /*#__PURE__*/pino({
   prettyPrint: {
@@ -131,5 +135,5 @@ var createHandlers = function createHandlers(scenarios, defaultScenarioName) {
   })]);
 };
 
-export { createHandlers };
+export { createHandlers, middleware };
 //# sourceMappingURL=msw-dynamic-http-middleware.esm.js.map

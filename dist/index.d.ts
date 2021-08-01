@@ -1,4 +1,5 @@
 import { RestHandler } from 'msw';
+export * from './middleware';
 export declare type Scenarios = Record<string, RestHandler | RestHandler[]>;
 /**
  * Create REST endpoints (handlers) based on the given scenarios.

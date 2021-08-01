@@ -1,0 +1,29 @@
+{
+  "name": "msw-ui-example",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Example server showing how to integrate msw-dynamic-http-middleware with UI",
+  "main": "index.ts",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "prettier": {
+    "arrowParens": "avoid",
+    "semi": true,
+    "singleQuote": true,
+    "printWidth": 120,
+    "trailingComma": "all"
+  },
+  "dependencies": {
+    "@mswjs/http-middleware": "0.1.1",
+    "express": "4.17.1",
+    "msw": "0.33.1",
+    "msw-dynamic-http-middleware": "0.6.1"
+  },
+  "devDependencies": {
+    "prettier": "1.19.1"
+  },
+  "keywords": [],
+  "author": "Frank van Wijk <info@frankvanwijk.nl>",
+  "license": "ISC"
+}

@@ -12,19 +12,17 @@
     "node": ">=14"
   },
   "scripts": {
-    "start": "npm run start:lib & npm run start:app & npm run start:server",
+    "start": "npm run start:lib & npm run start:app",
     "start:lib": "tsdx watch --tsconfig tsconfig.tsdx.json",
-    "start:app": "cd msw-ui && npm run dev",
-    "start:server": "node --loader ts-node/esm --es-module-specifier-resolution=node server.ts",
-    "build": "npm run build:lib && npm run build:app",
+    "build": "npm run build:lib && npm run build:app && npm run copy:app",
     "build:lib": "tsdx build --tsconfig tsconfig.tsdx.json",
     "build:app": "cd msw-ui && npm run build",
+    "copy:app": "cp -r msw-ui/dist -r dist/ui",
     "test": "tsdx test",
     "lint": "tsdx lint",
     "server": "",
     "prepublish": "npm run lint && npm run test && npm run build"
   },
-  "type": "module",
   "module": "dist/msw-dynamic-http-middleware.esm.js",
   "keywords": [
     "msw",
@@ -46,14 +44,13 @@
     "trailingComma": "all"
   },
   "dependencies": {
-    "@types/jest": "26.0.24",
-    "express": "4.17.1",
     "pino": "6.13.0",
     "pino-pretty": "5.1.2"
   },
   "devDependencies": {
     "@mswjs/http-middleware": "0.1.1",
     "@open-draft/test-server": "0.2.3",
+    "@types/jest": "26.0.24",
     "@types/node-fetch": "2.5.12",
     "@types/pino": "6.3.11",
     "msw": "0.33.1",
@@ -66,6 +63,7 @@
   },
   "peerDependencies": {
     "@mswjs/http-middleware": ">=0.1.1",
+    "express": "=>4",
     "msw": ">=0.25"
   }
 }

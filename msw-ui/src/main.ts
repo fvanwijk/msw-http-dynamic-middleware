@@ -3,7 +3,7 @@ import './style.css';
 
 /* Data */
 
-const getScenarios = async () => {
+const startApp = async () => {
   const scenarios: Record<string, RestHandler | RestHandler[]> = await fetch('/scenario').then(res => res.json());
 
   const scenariosPerHandler = Object.entries(scenarios)
@@ -74,4 +74,4 @@ const getScenarios = async () => {
   });
 };
 
-getScenarios();
+startApp();

@@ -6,6 +6,10 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 var pino = _interopDefault(require('pino'));
 var msw = require('msw');
+var path = _interopDefault(require('path'));
+var express = _interopDefault(require('express'));
+
+var middleware = /*#__PURE__*/express["static"]( /*#__PURE__*/path.join(__dirname, 'ui'));
 
 var logger = /*#__PURE__*/pino({
   prettyPrint: {
@@ -138,4 +142,5 @@ var createHandlers = function createHandlers(scenarios, defaultScenarioName) {
 };
 
 exports.createHandlers = createHandlers;
+exports.middleware = middleware;
 //# sourceMappingURL=msw-dynamic-http-middleware.cjs.development.js.map

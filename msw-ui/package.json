@@ -1,17 +1,25 @@
 {
   "name": "msw-ui",
+  "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite & npm run msw-server",
     "build": "tsc && vite build",
-    "serve": "vite preview"
+    "postbuild": "del dist/assets/* !dist/assets/*.svg",
+    "serve": "vite preview",
+    "msw-server": "node src/server.js"
   },
   "devDependencies": {
+    "@mswjs/http-middleware": "0.1.1",
     "autoprefixer": "10.3.1",
+    "del-cli": "4.0.1",
+    "msw": "0.33.2",
+    "msw-dynamic-http-middleware": "0.6.1",
     "postcss": "8.3.6",
     "tailwindcss": "2.2.7",
-    "typescript": "^4.3.2",
-    "vite": "^2.4.4"
+    "typescript": "4.3.5",
+    "vite": "^2.4.4",
+    "vite-plugin-singlefile": "0.5.1"
   },
   "dependencies": {}
 }

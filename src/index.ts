@@ -2,6 +2,8 @@ import pino from 'pino';
 import { ResponseResolver, rest, RestHandler } from 'msw';
 import { Path } from 'node-match-path';
 
+export * from './middleware';
+
 export type Scenarios = Record<string, RestHandler | RestHandler[]>;
 
 const logger = pino({
