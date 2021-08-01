@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createHandlers GET /scenario should return the map with scenarios and handler info 1`] = `
+Object {
+  "error": Array [
+    Object {
+      "header": "GET /user",
+      "method": "GET",
+      "path": "/user",
+    },
+    Object {
+      "header": "GET /users",
+      "method": "GET",
+      "path": "/users",
+    },
+  ],
+  "success": Array [
+    Object {
+      "header": "GET /user",
+      "method": "GET",
+      "path": "/user",
+    },
+    Object {
+      "header": "GET /users",
+      "method": "GET",
+      "path": "/users",
+    },
+  ],
+  "user error": Object {
+    "header": "GET /user",
+    "method": "GET",
+    "path": "/user",
+  },
+  "user success": Object {
+    "header": "GET /user",
+    "method": "GET",
+    "path": "/user",
+  },
+  "users error": Object {
+    "header": "GET /users",
+    "method": "GET",
+    "path": "/users",
+  },
+  "users success": Object {
+    "header": "GET /users",
+    "method": "GET",
+    "path": "/users",
+  },
+}
+`;

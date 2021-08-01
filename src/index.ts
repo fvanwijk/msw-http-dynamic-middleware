@@ -102,7 +102,22 @@ export const createHandlers = (scenarios: Scenarios, defaultScenarioName?: strin
     }),
 
     rest.get('/scenario', (_, res, ctx) => {
-      return res(ctx.json(scenarios));
+      const mappedScenarios = Object.entries(scenarios).reduce((acc, [scenarioName, handlers]) => {
+        const toInfoLite = ({ header, method, path }: RestHandler['info']) => ({
+          header,
+          method,
+          path: path.toString(),
+        });
+
+        if (Array.isArray(handlers)) {
+          acc[scenarioName] = handlers.map(handler => toInfoLite(handler.info));
+        } else {
+          acc[scenarioName] = toInfoLite(handlers.info);
+        }
+
+        return acc;
+      }, {} as Record<string, { header: string; method: string; path: string } | { header: string; method: string; path: string }[]>);
+      return res(ctx.json({ scenarios: mappedScenarios }));
     }),
 
     // Create endpoint to set mock for any endpoint

@@ -40,10 +40,6 @@ const assertText = async (path: string, text: string) => {
   expect(await res.text()).toEqual(text);
 };
 
-afterEach(() => {
-  server && server.close();
-});
-
 describe('createHandlers', () => {
   it('should throw error when there is a handler with path that is RegExp', async () => {
     expect(() => setup(createHandlers({ regexp: rest.get(/test/, () => {}) }))).toThrowError(
@@ -54,7 +50,6 @@ describe('createHandlers', () => {
   it('should execute default handler when no handlers are active', async () => {
     server = await setup(createHandlers(scenarios));
 
-    const res = await fetch(server.http.makeUrl('/user'));
     await assertText('/user', '');
   });
 
@@ -78,6 +73,15 @@ describe('createHandlers', () => {
       expect(() => setup(createHandlers(scenarios, 'not-exist'))).toThrowError(
         new Error('Scenario "not-exist" does not exist'),
       );
+    });
+  });
+
+  describe('GET /scenario', () => {
+    it('should return the map with scenarios and handler info', async () => {
+      server = await setup(createHandlers(scenarios, 'user success'));
+
+      const json = await fetch(server.http.makeUrl('/scenario')).then(res => res.json());
+      expect(json.scenarios).toMatchSnapshot();
     });
   });
 });
