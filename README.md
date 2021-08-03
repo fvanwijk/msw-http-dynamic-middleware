@@ -25,6 +25,8 @@ The following endpoints are available:
 
 There is also a UI provided that can be statically hosted on for example `/ui`, so that you can set scenarios from the browser instead of using `curl` / Postman. Note that GraphQL is not supported (yet).
 
+![MSW UI](./UI.png)
+
 ## How to use
 
 First install this package and `@msw/http-middleware` as devDependency in your project:
