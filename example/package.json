@@ -18,7 +18,7 @@
     "@mswjs/http-middleware": "0.1.1",
     "express": "4.17.1",
     "msw": "0.33.1",
-    "msw-dynamic-http-middleware": "0.8.0"
+    "msw-dynamic-http-middleware": "0.9.0"
   },
   "devDependencies": {
     "prettier": "1.19.1"
