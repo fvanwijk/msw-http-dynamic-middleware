@@ -10,22 +10,20 @@ const logger = pino({
   },
 });
 
+const userSuccess = rest.get('/user', (req, res, ctx) => res(ctx.json({ name: 'frank' })));
+const userError = rest.get('/user', (req, res, ctx) => res(ctx.status(500)));
+const usersSuccess = rest.get('/users', (req, res, ctx) => res(ctx.json([{ name: 'frank' }])));
+const usersError = rest.get('/users', (req, res, ctx) => res(ctx.status(500)));
 const scenarios = {
   // Scenarios for one endpoint
-  'user success': rest.get('/user', (req, res, ctx) => res(ctx.json({ name: 'frank' }))),
-  'user error': rest.get('/user', (req, res, ctx) => res(ctx.status(500))),
-  'users success': rest.get('/users', (req, res, ctx) => res(ctx.json([{ name: 'frank' }]))),
-  'users error': rest.get('/users', (req, res, ctx) => res(ctx.status(500))),
+  'user success': userSuccess,
+  'user error': userError,
+  'users success': usersSuccess,
+  'users error': usersError,
 
   // Scenarios for multiple endpoints
-  success: [
-    rest.get('/user', (req, res, ctx) => res(ctx.json({ name: 'frank' }))),
-    rest.get('/users', (req, res, ctx) => res(ctx.json([{ name: 'frank' }]))),
-  ],
-  error: [
-    rest.get('/user', (req, res, ctx) => res(ctx.status(500))),
-    rest.get('/users', (req, res, ctx) => res(ctx.status(500))),
-  ],
+  success: [userSuccess, usersSuccess],
+  error: [userError, usersError],
 };
 
 const port = 9800;

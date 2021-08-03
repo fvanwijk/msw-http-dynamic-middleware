@@ -2,7 +2,7 @@ import './style.css';
 
 /* Data */
 
-type RestHandlerInfo = { header: string; method: string; path: string };
+type RestHandlerInfo = { isActive: boolean; header: string; method: string; path: string };
 
 const startApp = async () => {
   const res: { scenarios: Record<string, RestHandlerInfo | RestHandlerInfo[]> } = await fetch('/scenario').then(res =>
@@ -21,22 +21,26 @@ const startApp = async () => {
       if (!(key in acc)) {
         acc[key] = { method, path, scenarios: [] };
       }
-      acc[key].scenarios.push(scenarioName);
+      acc[key].scenarios.push({ active: info.isActive, label: scenarioName });
 
       return acc;
-    }, {} as Record<string, { method: string; path: string; scenarios: string[] }>);
+    }, {} as Record<string, { method: string; path: string; scenarios: { active: boolean; label: string }[] }>);
 
   const globalScenarios = Object.entries(scenarios).filter(([_, handlers]) => Array.isArray(handlers));
 
-  const createButton = (scenario: string) => {
+  const createButton = (label: string, isActive?: boolean) => {
     const button = document.createElement('button');
-    button.innerText = scenario;
-    button.addEventListener('click', () => {
-      fetch('/scenario', {
+    if (isActive) {
+      button.className = 'active';
+    }
+    button.innerText = label;
+    button.addEventListener('click', async () => {
+      await fetch('/scenario', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ scenario }),
+        body: JSON.stringify({ scenario: label }),
       });
+      startApp();
     });
     return button;
   };
@@ -70,8 +74,9 @@ const startApp = async () => {
     tr.appendChild(createCell(path));
 
     const td = document.createElement('td');
+    console.log(scenarios);
     scenarios.forEach(scenario => {
-      td.appendChild(createButton(scenario));
+      td.appendChild(createButton(scenario.label, scenario.active));
     });
     tr.appendChild(td);
 

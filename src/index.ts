@@ -103,16 +103,22 @@ export const createHandlers = (scenarios: Scenarios, defaultScenarioName?: strin
 
     rest.get('/scenario', (_, res, ctx) => {
       const mappedScenarios = Object.entries(scenarios).reduce((acc, [scenarioName, handlers]) => {
-        const toInfoLite = ({ header, method, path }: RestHandler['info']) => ({
-          header,
-          method,
-          path: path.toString(),
-        });
+        const toInfoLite = (handler: RestHandler, { header, method, path }: RestHandler['info']) => {
+          const activeResolver = activeResolvers[path.toString()]?.[method];
+
+          return {
+            // @ts-ignore
+            isActive: activeResolver === handler.resolver,
+            header,
+            method,
+            path: path.toString(),
+          };
+        };
 
         if (Array.isArray(handlers)) {
-          acc[scenarioName] = handlers.map(handler => toInfoLite(handler.info));
+          acc[scenarioName] = handlers.map(handler => toInfoLite(handler, handler.info));
         } else {
-          acc[scenarioName] = toInfoLite(handlers.info);
+          acc[scenarioName] = toInfoLite(handlers, handlers.info);
         }
 
         return acc;

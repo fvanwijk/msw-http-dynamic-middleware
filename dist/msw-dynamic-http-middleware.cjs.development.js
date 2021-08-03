@@ -111,11 +111,16 @@ var createHandlers = function createHandlers(scenarios, defaultScenarioName) {
       var scenarioName = _ref[0],
           handlers = _ref[1];
 
-      var toInfoLite = function toInfoLite(_ref2) {
+      var toInfoLite = function toInfoLite(handler, _ref2) {
+        var _activeResolvers$path2;
+
         var header = _ref2.header,
             method = _ref2.method,
             path = _ref2.path;
+        var activeResolver = (_activeResolvers$path2 = activeResolvers[path.toString()]) == null ? void 0 : _activeResolvers$path2[method];
         return {
+          // @ts-ignore
+          isActive: activeResolver === handler.resolver,
           header: header,
           method: method,
           path: path.toString()
@@ -124,10 +129,10 @@ var createHandlers = function createHandlers(scenarios, defaultScenarioName) {
 
       if (Array.isArray(handlers)) {
         acc[scenarioName] = handlers.map(function (handler) {
-          return toInfoLite(handler.info);
+          return toInfoLite(handler, handler.info);
         });
       } else {
-        acc[scenarioName] = toInfoLite(handlers.info);
+        acc[scenarioName] = toInfoLite(handlers, handlers.info);
       }
 
       return acc;

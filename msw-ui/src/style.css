@@ -13,7 +13,10 @@
   }
 
   button {
-    @apply px-3 py-2 mr-2 bg-blue-700 hover:bg-blue-600 text-white rounded;
+    @apply px-3 py-1 mr-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded;
+  }
+  button.active {
+    @apply bg-blue-700 hover:bg-blue-600 text-white;
   }
 
   table tr th {

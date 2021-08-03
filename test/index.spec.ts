@@ -4,22 +4,20 @@ import { rest, RestHandler } from 'msw';
 import fetch from 'node-fetch';
 import { createHandlers } from '../src';
 
+const userSuccess = rest.get('/user', (req, res, ctx) => res(ctx.json({ name: 'frank' })));
+const userError = rest.get('/user', (req, res, ctx) => res(ctx.status(500)));
+const usersSuccess = rest.get('/users', (req, res, ctx) => res(ctx.json([{ name: 'frank' }])));
+const usersError = rest.get('/users', (req, res, ctx) => res(ctx.status(500)));
 const scenarios = {
   // Scenarios for one endpoint
-  'user success': rest.get('/user', (req, res, ctx) => res(ctx.json({ name: 'frank' }))),
-  'user error': rest.get('/user', (req, res, ctx) => res(ctx.status(500))),
-  'users success': rest.get('/users', (req, res, ctx) => res(ctx.json([{ name: 'frank' }]))),
-  'users error': rest.get('/users', (req, res, ctx) => res(ctx.status(500))),
+  'user success': userSuccess,
+  'user error': userError,
+  'users success': usersSuccess,
+  'users error': usersError,
 
   // Scenarios for multiple endpoints
-  success: [
-    rest.get('/user', (req, res, ctx) => res(ctx.json({ name: 'frank' }))),
-    rest.get('/users', (req, res, ctx) => res(ctx.json([{ name: 'frank' }]))),
-  ],
-  error: [
-    rest.get('/user', (req, res, ctx) => res(ctx.status(500))),
-    rest.get('/users', (req, res, ctx) => res(ctx.status(500))),
-  ],
+  success: [userSuccess, usersSuccess],
+  error: [userError, usersError],
 };
 
 let server: ServerApi;
@@ -102,6 +100,37 @@ describe('createHandlers', () => {
 
       const json = await fetch(server.http.makeUrl('/scenario')).then(res => res.json());
       expect(json.scenarios).toMatchSnapshot();
+
+      server.close();
+    });
+
+    it('should mark handlers as active if they were set by that scenario or have the same reference', async () => {
+      server = await setup(createHandlers(scenarios, 'success'));
+
+      const json = await fetch(server.http.makeUrl('/scenario')).then(res => res.json());
+
+      expect(json.scenarios.success[0].isActive).toBe(true);
+      expect(json.scenarios.success[1].isActive).toBe(true);
+      expect(json.scenarios.error[0].isActive).toBe(false);
+      expect(json.scenarios.error[1].isActive).toBe(false);
+      expect(json.scenarios['user success'].isActive).toBe(true);
+      expect(json.scenarios['user error'].isActive).toBe(false);
+      expect(json.scenarios['users success'].isActive).toBe(true);
+      expect(json.scenarios['users error'].isActive).toBe(false);
+
+      server.close();
+
+      server = await setup(createHandlers(scenarios, 'user success'));
+      const json2 = await fetch(server.http.makeUrl('/scenario')).then(res => res.json());
+
+      expect(json2.scenarios.success[0].isActive).toBe(true);
+      expect(json2.scenarios.success[1].isActive).toBe(false);
+      expect(json2.scenarios.error[0].isActive).toBe(false);
+      expect(json2.scenarios.error[1].isActive).toBe(false);
+      expect(json2.scenarios['user success'].isActive).toBe(true);
+      expect(json2.scenarios['user error'].isActive).toBe(false);
+      expect(json2.scenarios['users success'].isActive).toBe(false);
+      expect(json2.scenarios['users error'].isActive).toBe(false);
 
       server.close();
     });
