@@ -74,7 +74,6 @@ const startApp = async () => {
     tr.appendChild(createCell(path));
 
     const td = document.createElement('td');
-    console.log(scenarios);
     scenarios.forEach(scenario => {
       td.appendChild(createButton(scenario.label, scenario.active));
     });
