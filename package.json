@@ -1,6 +1,6 @@
 {
   "name": "msw-dynamic-http-middleware",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "description": "Set API handlers for your mock server on runtime",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -62,7 +62,7 @@
   },
   "peerDependencies": {
     "@mswjs/http-middleware": ">=0.1.1",
-    "express": "=>4",
+    "express": ">=4",
     "msw": ">=0.25"
   }
 }
