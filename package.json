@@ -21,7 +21,7 @@
     "lint": "tsdx lint",
     "server": "",
     "prepublish": "npm run lint && npm run test && npm run build",
-    "deploy:example": "git subtree push --prefix example heroku main"
+    "deploy:example": "git subtree split --prefix example -b example && git push -f heroku example:main && git branch -D example"
   },
   "module": "dist/msw-dynamic-http-middleware.esm.js",
   "keywords": [

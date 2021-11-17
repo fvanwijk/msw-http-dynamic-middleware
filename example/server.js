@@ -37,5 +37,5 @@ app.use(express.json());
 app.use(createMiddleware(...handlers));
 app.use('/ui', middleware);
 
-const port = 9800;
+const port = process.env.PORT ?? 80;
 app.listen(port, () => logger.info(`MSW server running at http://localhost:${port}`));
